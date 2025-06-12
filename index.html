@@ -739,12 +739,20 @@
         function generateCropSuggestions(filter = 'all') {
              const suggestionsGrid = document.getElementById('cropSuggestionsGrid');
              suggestionsGrid.innerHTML = '';
-             let filteredCrops = cropDatabase;
-             if(filter !== 'all') {
-                filteredCrops = cropDatabase.filter(c => c.category === filter);
+             let recommendedCrops;
+
+             if (filter === 'all') {
+                // If 'All Crops' is selected, get the top 3 most profitable crops overall.
+                recommendedCrops = cropDatabase
+                    .sort((a, b) => b.profit - a.profit)
+                    .slice(0, 3);
+             } else {
+                // If a specific category is selected, get the top 2 from that category.
+                recommendedCrops = cropDatabase
+                    .filter(c => c.category === filter)
+                    .sort((a, b) => b.profit - a.profit)
+                    .slice(0, 2);
              }
-             // Get top 20 recommendations
-             const recommendedCrops = filteredCrops.sort(() => 0.5 - Math.random()).slice(0, 20);
 
              recommendedCrops.forEach((crop, index) => {
                 const bestClass = index === 0 ? 'best-crop' : '';
